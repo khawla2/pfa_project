@@ -32,19 +32,23 @@ st.sidebar.image('cimar.png')
 
 # Options de la barre latérale avec boutons radio et emojis
 st.sidebar.subheader('Sélectionnez une page')
-page = st.selectbox('Choisir une page', 
-        ('🏠 Accueil', '⚙️ Classification et optimisation<br>en utilisant RC2j', '⚙️ Classification et optimisation<br>en utilisant RC28j', '📋 Informations Techniques'), 
-        format_func=lambda x: x.replace("<br>", "\n"))
+page = st.sidebar.radio(
+    'Choisissez une option', 
+    ['🏠 Accueil', '⚙️ Classification et optimisation en utilisant RC2j', '⚙️ Classification et optimisation en utilisant RC28j', '📋 Informations Techniques'],
+    format_func=lambda x: x[:30] + '...' if len(x) > 30 else x
+)
 
 # Fonction pour afficher la page d'accueil
 def home():
-    st.markdown("""<div class="main-content">
-                    <div class="app-background">
-                        <div class="rectangle">
-                            <h1 class="title">Classification des produits cimentiers CPJ45 de l'usine de Jorf</h1>
-                        </div>
-                    </div>
-                </div>""", unsafe_allow_html=True)
+    st.markdown("""
+        <div class="main-content">
+            <div class="app-background">
+                <div class="rectangle">
+                    <h1 class="title">Classification des produits cimentiers CPJ45 de l'usine de Jorf</h1>
+                </div>
+            </div>
+        </div>
+    """, unsafe_allow_html=True)
 
 # Fonction pour afficher la page RC2j
 def rc2_page():
@@ -61,13 +65,13 @@ def rc2_page():
         </style>
         <h1 style='text-align: center; color: #2F4F4F;'>Classification et optimisation en utilisant RC2j</h1>
         """, unsafe_allow_html=True)
-
+    
     st.write("Veuillez entrer les valeurs demandées ci-dessous :")
 
     with st.form(key='rc2_form'):
         # Entrée des valeurs pour les paramètres
         col1, col2 = st.columns(2)
-
+        
         with col1:
             st.markdown('<div class="custom-col custom-col1">', unsafe_allow_html=True)
             PAF_CV = st.number_input('PAF CV', value=0.0)
@@ -152,12 +156,12 @@ def rc28_page():
         </style>
         <h1 style='text-align: center; color: #2F4F4F;'>Classification et optimisation en utilisant RC28j</h1>
         """, unsafe_allow_html=True)
-
+    
     st.write("Veuillez entrer les valeurs demandées ci-dessous :")
 
     with st.form(key='rc28_form'):
         col1, col2 = st.columns(2)
-
+        
         with col1:
             st.markdown('<div class="custom-col custom-col1">', unsafe_allow_html=True)
             PAF_CV = st.number_input('PAF CV', value=0.0)
@@ -211,23 +215,23 @@ def rc28_page():
             prediction = rc28_model.predict(input_data)
 
             if prediction[0] == 1:
-                st.markdown("<p class='custom-success'>✅ Vu que la résistance RC28j dépasse 30 MPa, alors votre produit est de bonne qualité.</p>", unsafe_allow_html=True)
+                st.markdown("<p class='custom-success'>✅ Vu que la résistance RC28j dépasse 24 MPa, alors votre produit est de bonne qualité.</p>", unsafe_allow_html=True)
             else:
-                st.markdown("<p class='custom-error'>❌ Vu que la résistance RC28j est inférieure à 30 MPa, alors votre produit n'est pas de bonne qualité.</p>", unsafe_allow_html=True)
+                st.markdown("<p class='custom-error'>❌ Vu que la résistance RC28j est inférieure à 24 MPa, alors votre produit n'est pas de bonne qualité.</p>", unsafe_allow_html=True)
 
-# Fonction pour afficher la page des informations techniques
-def info_page():
+# Fonction pour afficher les informations techniques
+def technical_info():
     st.markdown("""
         <h1 style='text-align: center; color: #2F4F4F;'>Informations Techniques</h1>
-        <p>Cette section fournit des détails techniques sur les produits cimentiers.</p>
-    """)
+        <p style='text-align: justify;'>Dans cette section, vous pouvez fournir des informations techniques sur les produits cimentiers, les méthodes de production, et les normes de qualité.</p>
+        """, unsafe_allow_html=True)
 
-# Route vers les pages appropriées
+# Afficher la page sélectionnée
 if page == '🏠 Accueil':
     home()
-elif page == '⚙️ Classification et optimisation<br>en utilisant RC2j':
+elif page == '⚙️ Classification et optimisation en utilisant RC2j':
     rc2_page()
-elif page == '⚙️ Classification et optimisation<br>en utilisant RC28j':
+elif page == '⚙️ Classification et optimisation en utilisant RC28j':
     rc28_page()
 elif page == '📋 Informations Techniques':
-    info_page()
+    technical_info()
