@@ -141,6 +141,21 @@ def rc2_page():
         st.write("Les paramètres optimaux pour la valeur de RC2j souhaitée sont :")
         st.write(optimal_parameters)
 
+# Charger le modèle et les meilleurs paramètres pour RC28j
+rc28_model = joblib.load('optimal_model_RC28.pkl')
+best_params_rc28 = joblib.load('best_params_RC28.pkl')
+
+# Fonction pour nettoyer les colonnes numériques
+def clean_numeric_columns(df):
+    for col in df.columns:
+        # Remplacer les virgules par des points pour la conversion en float
+        df[col] = df[col].astype(str).str.replace(',', '.', regex=False)
+        # Remplacer les fractions par leur valeur numérique moyenne
+        df[col] = df[col].str.split('/').apply(lambda x: float(x[0]) / float(x[1]) if len(x) == 2 else float(x[0]) if x else np.nan)
+        # Convertir en float, en forçant les erreurs à NaN
+        df[col] = pd.to_numeric(df[col], errors='coerce')
+    return df
+
 # Fonction pour afficher la page RC28j
 def rc28_page():
     st.markdown("""
@@ -154,7 +169,7 @@ def rc28_page():
         .custom-success { color: #28a745; }
         .custom-error { color: #dc3545; }
         </style>
-        <h1 style='text-align: center; color: #2F4F4F;'>Classification et optimisation en utilisant RC28j</h1>
+        <h1 style='text-align: center; color: #2F4F4F;'>Classification des produits cimentiers en se basant sur RC28j</h1>
         """, unsafe_allow_html=True)
     
     st.write("Veuillez entrer les valeurs demandées ci-dessous :")
@@ -214,10 +229,22 @@ def rc28_page():
 
             prediction = rc28_model.predict(input_data)
 
-            if prediction[0] == 1:
-                st.markdown("<p class='custom-success'>✅ Vu que la résistance RC28j dépasse 24 MPa, alors votre produit est de bonne qualité.</p>", unsafe_allow_html=True)
+            if 34 <= prediction[0] <= 55:  # Assumer que la sortie est une résistance RC28j
+                st.markdown("<p class='custom-success'>✅ Vu que la résistance RC28j varie entre 34 et 55 MPa, alors votre produit est de bonne qualité.</p>", unsafe_allow_html=True)
             else:
-                st.markdown("<p class='custom-error'>❌ Vu que la résistance RC28j est inférieure à 24 MPa, alors votre produit n'est pas de bonne qualité.</p>", unsafe_allow_html=True)
+                st.markdown("<p class='custom-error'>❌ Vu que la résistance RC28j est inférieure à 34 MPa, alors votre produit n'est pas de bonne qualité.</p>", unsafe_allow_html=True)
+
+    # Section pour prédire les paramètres optimaux
+    st.subheader("Prédiction des Paramètres Optimaux")
+
+    # Demander à l'utilisateur d'entrer la valeur souhaitée de RC28j
+    rc28j_value = st.number_input("Entrez la valeur souhaitée de RC28j :", min_value=0.0)
+
+    # Bouton pour prédire les paramètres optimaux
+    if st.button("Prédire les Paramètres Optimaux"):
+        optimal_parameters = predict_optimal_parameters(rc28j_value, rc28_model, best_params_rc28)
+        st.write("Les paramètres optimaux pour la valeur de RC28j souhaitée sont :")
+        st.write(optimal_parameters)
 
 def info_tech_page():
     st.title("📋 Informations Techniques")
