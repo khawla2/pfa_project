@@ -32,9 +32,11 @@ st.sidebar.image('cimar.png')
 
 # Options de la barre latérale avec boutons radio et emojis
 st.sidebar.subheader('Sélectionnez une page')
-page = st.selectbox('Choisir une page', 
-        ('🏠 Accueil', '⚙️ Classification<br>et optimisation en utilisant RC2j', '⚙️ Classification<br>et optimisation en utilisant RC28j', '📋 Informations Techniques'), 
-        format_func=lambda x: x.replace("<br>", "\n"))
+page = st.sidebar.radio(
+    'Choisissez une option', 
+    ['🏠 Accueil', '⚙️ Classification et optimisation en utilisant RC2j', '⚙️ Classification et optimisation en utilisant RC28j', '📋 Informations Techniques'],
+    format_func=lambda x: x[:30] + '...' if len(x) > 30 else x
+)
 
 # Fonction pour afficher la page d'accueil
 def home():
