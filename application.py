@@ -63,12 +63,13 @@ def rc2_page():
         .custom-success { color: #28a745; }
         .custom-error { color: #dc3545; }
         </style>
-        <h1 style='text-align: center; color: #2F4F4F;'>Classification des produits cimentiers en se basant sur RC2j</h1>
+        <h1 style='text-align: center; color: #2F4F4F;'>Classification et optimisation en utilisant RC2j</h1>
         """, unsafe_allow_html=True)
     
     st.write("Veuillez entrer les valeurs demandées ci-dessous :")
 
     with st.form(key='rc2_form'):
+        # Entrée des valeurs pour les paramètres
         col1, col2 = st.columns(2)
         
         with col1:
@@ -153,7 +154,7 @@ def rc28_page():
         .custom-success { color: #28a745; }
         .custom-error { color: #dc3545; }
         </style>
-        <h1 style='text-align: center; color: #2F4F4F;'>Classification des produits cimentiers en se basant sur RC28j</h1>
+        <h1 style='text-align: center; color: #2F4F4F;'>Classification et optimisation en utilisant RC28j</h1>
         """, unsafe_allow_html=True)
     
     st.write("Veuillez entrer les valeurs demandées ci-dessous :")
@@ -214,36 +215,16 @@ def rc28_page():
             prediction = rc28_model.predict(input_data)
 
             if prediction[0] == 1:
-                st.markdown("<p class='custom-success'>✅ Vu que la résistance RC28j dépasse 25 MPa, alors votre produit est de bonne qualité.</p>", unsafe_allow_html=True)
+                st.markdown("<p class='custom-success'>✅ Vu que la résistance RC28j dépasse 24 MPa, alors votre produit est de bonne qualité.</p>", unsafe_allow_html=True)
             else:
-                st.markdown("<p class='custom-error'>❌ Vu que la résistance RC28j est inférieure à 25 MPa, alors votre produit n'est pas de bonne qualité.</p>", unsafe_allow_html=True)
-
-    # Section pour prédire les paramètres optimaux
-    st.subheader("Prédiction des Paramètres Optimaux")
-
-    # Demander à l'utilisateur d'entrer la valeur souhaitée de RC28j
-    rc28j_value = st.number_input("Entrez la valeur souhaitée de RC28j :", min_value=0.0)
-
-    # Bouton pour prédire les paramètres optimaux
-    if st.button("Prédire les Paramètres Optimaux"):
-        optimal_parameters = predict_optimal_parameters(rc28j_value, rc28_model, best_params)
-        st.write("Les paramètres optimaux pour la valeur de RC28j souhaitée sont :")
-        st.write(optimal_parameters)
+                st.markdown("<p class='custom-error'>❌ Vu que la résistance RC28j est inférieure à 24 MPa, alors votre produit n'est pas de bonne qualité.</p>", unsafe_allow_html=True)
 
 # Fonction pour afficher les informations techniques
-def info_page():
+def technical_info():
     st.markdown("""
         <h1 style='text-align: center; color: #2F4F4F;'>Informations Techniques</h1>
-        <p>
-            Ce système est conçu pour classifier la qualité des produits cimentiers, spécifiquement le CPJ45, 
-            en utilisant les algorithmes de machine learning. Les modèles sont entraînés pour prédire la résistance 
-            en fonction de divers paramètres. 
-        </p>
-        <p>
-            Les informations techniques et les spécifications des paramètres d'entrée sont disponibles dans la section 
-            correspondante de l'application.
-        </p>
-    """, unsafe_allow_html=True)
+        <p style='text-align: justify;'>Dans cette section, vous pouvez fournir des informations techniques sur les produits cimentiers, les méthodes de production, et les normes de qualité.</p>
+        """, unsafe_allow_html=True)
 
 # Afficher la page sélectionnée
 if page == '🏠 Accueil':
@@ -253,4 +234,4 @@ elif page == '⚙️ Classification et optimisation en utilisant RC2j':
 elif page == '⚙️ Classification et optimisation en utilisant RC28j':
     rc28_page()
 elif page == '📋 Informations Techniques':
-    info_page()
+    technical_info()
