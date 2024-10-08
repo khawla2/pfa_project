@@ -265,23 +265,23 @@ def info_tech_page():
         </style>
         <div class="info-box">
             <h4>Description des Paramètres :</h4>
-            <p><span class="highlight">PAF CV</span> : Perte au feu du cendre volante, mesurant la réduction du poids due à la décomposition thermique.</p>
-            <p><span class="highlight">SiO2</span> : Dioxyde de silicium, un composant clé dans la production de ciment, essentiel pour la résistance mécanique du produit fini.</p>
-            <p><span class="highlight">Al2O3</span> : Oxyde d'aluminium, utilisé pour réguler le temps de prise du ciment et améliorer ses propriétés mécaniques.</p>
-            <p><span class="highlight">Fe2O3</span> : Oxyde de fer, qui influence la couleur et certaines caractéristiques chimiques du clinker.</p>
-            <p><span class="highlight">CaO</span> : Oxyde de calcium, un composant majeur dérivé du calcaire, responsable de la formation de silicates de calcium, principaux contributeurs à la résistance du ciment.</p>
-            <p><span class="highlight">MgO</span> : Oxyde de magnésium, un composé secondaire dont une concentration élevée peut affecter les propriétés du ciment.</p>
-            <p><span class="highlight">SO3 cl</span> : Oxyde de soufre dans le clinker, reflétant la quantité de soufre issue du combustible utilisé.</p>
-            <p><span class="highlight">K2O</span> : Oxyde de potassium, un alkali qui affecte la formation des phases dans le clinker et la réactivité du ciment.</p>
-            <p><span class="highlight">PAF cl</span> :La perte au feu du clinker est un paramètre qui mesure la quantité de matière volatile qui est libérée lorsque le clinker est chauffé à une température élevée, généralement autour de 1000-1100 °C .</p>
-            <p><span class="highlight">CaOl</span> : Oxyde de calcium libre, représentant la quantité de chaux non réagit, signe d'une cuisson incomplète.</p>
-            <p><span class="highlight">C3A</span> : Tricalcium aluminate, responsable de la prise rapide du ciment et de sa résistance initiale.</p>
-            <p><span class="highlight">C3S</span> : Tricalcium silicate, principal facteur de la résistance mécanique à court terme (2 à 7 jours) du ciment.</p>
-            <p><span class="highlight">SO3 g</span> : Oxyde de soufre dans le gypse, régulateur du temps de prise du ciment.</p>
-            <p><span class="highlight">%clinker</span> : Pourcentage de clinker dans le mélange cimentaire, principal constituant réactif du ciment.</p>
-            <p><span class="highlight">% CV</span> : Pourcentage du cendre volante.</p>
-            <p><span class="highlight">% gypse</span> : Pourcentage de gypse ajouté, utilisé pour réguler le temps de prise du ciment.</p>
-            <p><span class="highlight">Refus 40 μm</span> : Proportion des particules supérieures à 40 microns après broyage, affectant la finesse du ciment et sa réactivité.</p>
+            <p><span class="highlight">PAF CV</span>: Perte au feu du cendre volante, mesurant la réduction du poids due à la décomposition thermique.</p>
+            <p><span class="highlight">SiO2</span>: Dioxyde de silicium, un composant clé dans la production de ciment, essentiel pour la résistance mécanique du produit fini.</p>
+            <p><span class="highlight">Al2O3</span>: Oxyde d'aluminium, utilisé pour réguler le temps de prise du ciment et améliorer ses propriétés mécaniques.</p>
+            <p><span class="highlight">Fe2O3</span>: Oxyde de fer, qui influence la couleur et certaines caractéristiques chimiques du clinker.</p>
+            <p><span class="highlight">CaO</span>: Oxyde de calcium, un composant majeur dérivé du calcaire, responsable de la formation de silicates de calcium, principaux contributeurs à la résistance du ciment.</p>
+            <p><span class="highlight">MgO</span>: Oxyde de magnésium, un composé secondaire dont une concentration élevée peut affecter les propriétés du ciment.</p>
+            <p><span class="highlight">SO3 cl</span>: Oxyde de soufre dans le clinker, reflétant la quantité de soufre issue du combustible utilisé.</p>
+            <p><span class="highlight">K2O</span>: Oxyde de potassium, un alkali qui affecte la formation des phases dans le clinker et la réactivité du ciment.</p>
+            <p><span class="highlight">PAF cl</span>: La perte au feu du clinker est un paramètre qui mesure la quantité de matière volatile libérée lorsque le clinker est chauffé à une température élevée, généralement autour de 1000-1100 °C.</p>
+            <p><span class="highlight">CaOl</span>: Oxyde de calcium libre, représentant la quantité de chaux non réagit, signe d'une cuisson incomplète.</p>
+            <p><span class="highlight">C3A</span>: Tricalcium aluminate, responsable de la prise rapide du ciment et de sa résistance initiale.</p>
+            <p><span class="highlight">C3S</span>: Tricalcium silicate, principal facteur de la résistance mécanique à court terme (2 à 7 jours) du ciment.</p>
+            <p><span class="highlight">SO3 g</span>: Oxyde de soufre dans le gypse, régulateur du temps de prise du ciment.</p>
+            <p><span class="highlight">% clinker</span>: Pourcentage de clinker dans le mélange cimentaire, principal constituant réactif du ciment.</p>
+            <p><span class="highlight">% CV</span>: Pourcentage du cendre volante.</p>
+            <p><span class="highlight">% gypse</span>: Pourcentage de gypse ajouté, utilisé pour réguler le temps de prise du ciment.</p>
+            <p><span class="highlight">Refus 40 μm</span>: Proportion des particules supérieures à 40 microns après broyage, affectant la finesse du ciment et sa réactivité.</p>
         </div>
     """, unsafe_allow_html=True)
 
@@ -305,7 +305,7 @@ def info_tech_page():
                 <td>0.8214</td>
             </tr>
             <tr>
-                <td><strong>Précision</strong></td>
+                <td><strong>Rappel</strong></td>
                 <td>0.8424</td>
             </tr>
             <tr>
@@ -340,7 +340,7 @@ def info_tech_page():
                 <td>0.9464</td>
             </tr>
             <tr>
-                <td><strong>Précision</strong></td>
+                <td><strong>Rappel</strong></td>
                 <td>0.9478</td>
             </tr>
             <tr>
@@ -355,9 +355,6 @@ def info_tech_page():
     st.image("matice_confusion_28.png", caption="Matrice de confusion pour le modèle Random Forest (RC28j)", use_column_width=True)
     st.image("roc.png", caption="La courbe de ROC pour le modèle Random Forest (RC28j)", use_column_width=True)
 
-
-
-
 # Afficher la page sélectionnée
 if page == '🏠 Accueil':
     home()
@@ -366,4 +363,4 @@ elif page == '⚙️ Classification et optimisation en utilisant RC2j':
 elif page == '⚙️ Classification et optimisation en utilisant RC28j':
     rc28_page()
 elif page == '📋 Informations Techniques':
-    technical_info()
+    info_tech_page()
