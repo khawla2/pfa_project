@@ -192,8 +192,8 @@ def rc2_page():
         st.write(optimal_parameters)
 
 # Charger le modèle et les meilleurs paramètres pour RC28j
-rc28_model = joblib.load('optimal_model_rc28.pkl')
-best_params_rc28 = joblib.load('best_params_rc28.pkl')
+rc28_model = joblib.load('optimal_model_RC28.pkl')
+best_params_rc28 = joblib.load('best_params_RC28.pkl')
 
 # Fonction pour nettoyer les colonnes numériques
 def clean_numeric_columns(df):
