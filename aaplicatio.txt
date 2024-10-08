@@ -2,6 +2,9 @@
 import streamlit as st
 import pandas as pd
 import joblib
+import numpy as np
+import streamlit as st
+from sklearn.ensemble import RandomForestRegressor
 
 # Configuration de la page
 st.set_page_config(
@@ -14,6 +17,9 @@ st.set_page_config(
 # Charger les modèles
 rc2_model = joblib.load('RC2_classification_randomforest.pkl')['random_forest']
 rc28_model = joblib.load('RC28_classification_randomforest.pkl')['random_forest']
+# Charger le modèle et les meilleurs paramètres
+optimal_model = joblib.load('optimal_model.pkl')
+best_params = joblib.load('best_params.pkl')
 
 # Charger les données
 data = pd.read_excel('Base de donnée Stage.xlsx', header=2)
@@ -49,7 +55,52 @@ def home():
 import streamlit as st
 import pandas as pd
 
-# Fonction pour afficher la page RC2j
+# Charger le modèle et les meilleurs paramètres
+optimal_model = joblib.load('optimal_model.pkl')
+best_params = joblib.load('best_params.pkl')
+
+# Charger les données à partir du fichier Excel
+dataset = pd.read_excel('Base de donnée Stage.xlsx', header=2)  # Charger le fichier Excel
+
+# Fonction pour nettoyer les colonnes numériques
+def clean_numeric_columns(df):
+    for col in df.columns:
+        # Remplacer les virgules par des points pour la conversion en float
+        df[col] = df[col].astype(str).str.replace(',', '.', regex=False)
+        # Remplacer les fractions par leur valeur numérique moyenne
+        df[col] = df[col].str.split('/').apply(lambda x: float(x[0]) / float(x[1]) if len(x) == 2 else float(x[0]) if x else np.nan)
+        # Convertir en float, en forçant les erreurs à NaN
+        df[col] = pd.to_numeric(df[col], errors='coerce')
+    return df
+
+# Nettoyer les données
+dataset = clean_numeric_columns(dataset)
+
+# Supprimer la première colonne et les cinq dernières colonnes
+dataset = dataset.drop(dataset.columns[0], axis=1)  # Supprimer la première colonne
+dataset = dataset.iloc[:, :-5]  # Supprimer les cinq dernières colonnes
+
+# Remplacer les valeurs NaN par la moyenne de chaque colonne
+dataset.fillna(dataset.mean(), inplace=True)
+
+# Définir X et y
+X = dataset.drop('RC 2j', axis=1)  # Variables indépendantes
+y = dataset['RC 2j']  # Variable dépendante
+
+# Fonction pour prédire les paramètres optimaux
+def predict_optimal_parameters(target_value, model, best_params):
+    # Entraîner le modèle avec les meilleurs paramètres
+    optimal_model = RandomForestRegressor(**best_params)
+    optimal_model.fit(X, y)  # Entraîner le modèle sur X et y
+
+    # Prédire les valeurs en fonction de RC 2j
+    predictions = optimal_model.predict(X)
+
+    # Identifier les paramètres correspondant à la valeur cible
+    optimal_parameters = X.iloc[np.abs(predictions - target_value).argmin()]
+    return optimal_parameters
+
+# Fonction de la page rc2
 def rc2_page():
     st.markdown("""
         <style>
@@ -64,9 +115,11 @@ def rc2_page():
         </style>
         <h1 style='text-align: center; color: #2F4F4F;'>Classification des produits cimentiers en se basant sur RC2j</h1>
         """, unsafe_allow_html=True)
+    
     st.write("Veuillez entrer les valeurs demandées ci-dessous :")
 
     with st.form(key='rc2_form'):
+        # Entrée des valeurs pour les paramètres
         col1, col2 = st.columns(2)
         
         with col1:
@@ -119,12 +172,39 @@ def rc2_page():
                 'Refus 40 μm': [Refus_40_m]
             })
 
-            prediction = rc2_model.predict(input_data)
+            prediction = optimal_model.predict(input_data)
 
             if prediction[0] == 1:
                 st.markdown("<p class='custom-success'>✅ Vu que la résistance RC2j dépasse 13.5 MPa, alors votre produit est de bonne qualité.</p>", unsafe_allow_html=True)
             else:
                 st.markdown("<p class='custom-error'>❌ Vu que la résistance RC2j est inférieure à 13.5 MPa, alors votre produit n'est pas de bonne qualité.</p>", unsafe_allow_html=True)
+
+    # Section pour prédire les paramètres optimaux
+    st.subheader("Prédiction des Paramètres Optimaux")
+
+    # Demander à l'utilisateur d'entrer la valeur souhaitée de RC2j
+    rc2j_value = st.number_input("Entrez la valeur souhaitée de RC2j :", min_value=0.0)
+
+    # Bouton pour prédire les paramètres optimaux
+    if st.button("Prédire les Paramètres Optimaux"):
+        optimal_parameters = predict_optimal_parameters(rc2j_value, optimal_model, best_params)
+        st.write("Les paramètres optimaux pour la valeur de RC2j souhaitée sont :")
+        st.write(optimal_parameters)
+
+# Charger le modèle et les meilleurs paramètres pour RC28j
+rc28_model = joblib.load('optimal_model_RC28.pkl')
+best_params_rc28 = joblib.load('best_params_RC28.pkl')
+
+# Fonction pour nettoyer les colonnes numériques
+def clean_numeric_columns(df):
+    for col in df.columns:
+        # Remplacer les virgules par des points pour la conversion en float
+        df[col] = df[col].astype(str).str.replace(',', '.', regex=False)
+        # Remplacer les fractions par leur valeur numérique moyenne
+        df[col] = df[col].str.split('/').apply(lambda x: float(x[0]) / float(x[1]) if len(x) == 2 else float(x[0]) if x else np.nan)
+        # Convertir en float, en forçant les erreurs à NaN
+        df[col] = pd.to_numeric(df[col], errors='coerce')
+    return df
 
 # Fonction pour afficher la page RC28j
 def rc28_page():
@@ -141,6 +221,7 @@ def rc28_page():
         </style>
         <h1 style='text-align: center; color: #2F4F4F;'>Classification des produits cimentiers en se basant sur RC28j</h1>
         """, unsafe_allow_html=True)
+    
     st.write("Veuillez entrer les valeurs demandées ci-dessous :")
 
     with st.form(key='rc28_form'):
@@ -198,10 +279,22 @@ def rc28_page():
 
             prediction = rc28_model.predict(input_data)
 
-            if prediction[0] == 1:
+            if 34 <= prediction[0] <= 55:  # Assumer que la sortie est une résistance RC28j
                 st.markdown("<p class='custom-success'>✅ Vu que la résistance RC28j varie entre 34 et 55 MPa, alors votre produit est de bonne qualité.</p>", unsafe_allow_html=True)
             else:
                 st.markdown("<p class='custom-error'>❌ Vu que la résistance RC28j est inférieure à 34 MPa, alors votre produit n'est pas de bonne qualité.</p>", unsafe_allow_html=True)
+
+    # Section pour prédire les paramètres optimaux
+    st.subheader("Prédiction des Paramètres Optimaux")
+
+    # Demander à l'utilisateur d'entrer la valeur souhaitée de RC28j
+    rc28j_value = st.number_input("Entrez la valeur souhaitée de RC28j :", min_value=0.0)
+
+    # Bouton pour prédire les paramètres optimaux
+    if st.button("Prédire les Paramètres Optimaux"):
+        optimal_parameters = predict_optimal_parameters(rc28j_value, rc28_model, best_params_rc28)
+        st.write("Les paramètres optimaux pour la valeur de RC28j souhaitée sont :")
+        st.write(optimal_parameters)
 
 def info_tech_page():
     st.title("📋 Informations Techniques")
@@ -338,7 +431,6 @@ def info_tech_page():
     # Affichage de l'image de la matrice de confusion pour RC28j avec un titre
     st.image("matice_confusion_28.png", caption="Matrice de confusion pour le modèle Random Forest (RC28j)", use_column_width=True)
     st.image("roc.png", caption="La courbe de ROC pour le modèle Random Forest (RC28j)", use_column_width=True)
-
 
 
 
