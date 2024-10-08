@@ -3,6 +3,7 @@ import streamlit as st
 import pandas as pd
 import joblib
 import numpy as np
+import streamlit as st
 from sklearn.ensemble import RandomForestRegressor
 
 # Configuration de la page
@@ -34,7 +35,7 @@ st.sidebar.image('cimar.png')
 st.sidebar.subheader('Sélectionnez une page')
 page = st.sidebar.radio(
     'Choisissez une option', 
-    ['🏠 Accueil', '⚙️ Classification et optimisation en utilisant RC2j', '⚙️ Classification et optimisation en utilisant RC28j', '📋 Informations Techniques'],
+    ['🏠 Accueil', '⚙️ Classification avec RC2j', '⚙️ Classification avec RC28j', '📋 Informations Techniques'],
     format_func=lambda x: x[:30] + '...' if len(x) > 30 else x
 )
 
@@ -51,6 +52,55 @@ def home():
     """, unsafe_allow_html=True)
 
 # Fonction pour afficher la page RC2j
+import streamlit as st
+import pandas as pd
+
+# Charger le modèle et les meilleurs paramètres
+optimal_model = joblib.load('optimal_model.pkl')
+best_params = joblib.load('best_params.pkl')
+
+# Charger les données à partir du fichier Excel
+dataset = pd.read_excel('Base de donnée Stage.xlsx', header=2)  # Charger le fichier Excel
+
+# Fonction pour nettoyer les colonnes numériques
+def clean_numeric_columns(df):
+    for col in df.columns:
+        # Remplacer les virgules par des points pour la conversion en float
+        df[col] = df[col].astype(str).str.replace(',', '.', regex=False)
+        # Remplacer les fractions par leur valeur numérique moyenne
+        df[col] = df[col].str.split('/').apply(lambda x: float(x[0]) / float(x[1]) if len(x) == 2 else float(x[0]) if x else np.nan)
+        # Convertir en float, en forçant les erreurs à NaN
+        df[col] = pd.to_numeric(df[col], errors='coerce')
+    return df
+
+# Nettoyer les données
+dataset = clean_numeric_columns(dataset)
+
+# Supprimer la première colonne et les cinq dernières colonnes
+dataset = dataset.drop(dataset.columns[0], axis=1)  # Supprimer la première colonne
+dataset = dataset.iloc[:, :-5]  # Supprimer les cinq dernières colonnes
+
+# Remplacer les valeurs NaN par la moyenne de chaque colonne
+dataset.fillna(dataset.mean(), inplace=True)
+
+# Définir X et y
+X = dataset.drop('RC 2j', axis=1)  # Variables indépendantes
+y = dataset['RC 2j']  # Variable dépendante
+
+# Fonction pour prédire les paramètres optimaux
+def predict_optimal_parameters(target_value, model, best_params):
+    # Entraîner le modèle avec les meilleurs paramètres
+    optimal_model = RandomForestRegressor(**best_params)
+    optimal_model.fit(X, y)  # Entraîner le modèle sur X et y
+
+    # Prédire les valeurs en fonction de RC 2j
+    predictions = optimal_model.predict(X)
+
+    # Identifier les paramètres correspondant à la valeur cible
+    optimal_parameters = X.iloc[np.abs(predictions - target_value).argmin()]
+    return optimal_parameters
+
+# Fonction de la page rc2
 def rc2_page():
     st.markdown("""
         <style>
@@ -63,7 +113,7 @@ def rc2_page():
         .custom-success { color: #28a745; }
         .custom-error { color: #dc3545; }
         </style>
-        <h1 style='text-align: center; color: #2F4F4F;'>Classification et optimisation en utilisant RC2j</h1>
+        <h1 style='text-align: center; color: #2F4F4F;'>Classification des produits cimentiers en se basant sur RC2j</h1>
         """, unsafe_allow_html=True)
     
     st.write("Veuillez entrer les valeurs demandées ci-dessous :")
@@ -292,23 +342,23 @@ def info_tech_page():
         </style>
         <div class="info-box">
             <h4>Description des Paramètres :</h4>
-            <p><span class="highlight">PAF CV</span>: Perte au feu du cendre volante, mesurant la réduction du poids due à la décomposition thermique.</p>
-            <p><span class="highlight">SiO2</span>: Dioxyde de silicium, un composant clé dans la production de ciment, essentiel pour la résistance mécanique du produit fini.</p>
-            <p><span class="highlight">Al2O3</span>: Oxyde d'aluminium, utilisé pour réguler le temps de prise du ciment et améliorer ses propriétés mécaniques.</p>
-            <p><span class="highlight">Fe2O3</span>: Oxyde de fer, qui influence la couleur et certaines caractéristiques chimiques du clinker.</p>
-            <p><span class="highlight">CaO</span>: Oxyde de calcium, un composant majeur dérivé du calcaire, responsable de la formation de silicates de calcium, principaux contributeurs à la résistance du ciment.</p>
-            <p><span class="highlight">MgO</span>: Oxyde de magnésium, un composé secondaire dont une concentration élevée peut affecter les propriétés du ciment.</p>
-            <p><span class="highlight">SO3 cl</span>: Oxyde de soufre dans le clinker, reflétant la quantité de soufre issue du combustible utilisé.</p>
-            <p><span class="highlight">K2O</span>: Oxyde de potassium, un alkali qui affecte la formation des phases dans le clinker et la réactivité du ciment.</p>
-            <p><span class="highlight">PAF cl</span>: La perte au feu du clinker est un paramètre qui mesure la quantité de matière volatile libérée lorsque le clinker est chauffé à une température élevée, généralement autour de 1000-1100 °C.</p>
-            <p><span class="highlight">CaOl</span>: Oxyde de calcium libre, représentant la quantité de chaux non réagit, signe d'une cuisson incomplète.</p>
-            <p><span class="highlight">C3A</span>: Tricalcium aluminate, responsable de la prise rapide du ciment et de sa résistance initiale.</p>
-            <p><span class="highlight">C3S</span>: Tricalcium silicate, principal facteur de la résistance mécanique à court terme (2 à 7 jours) du ciment.</p>
-            <p><span class="highlight">SO3 g</span>: Oxyde de soufre dans le gypse, régulateur du temps de prise du ciment.</p>
-            <p><span class="highlight">% clinker</span>: Pourcentage de clinker dans le mélange cimentaire, principal constituant réactif du ciment.</p>
-            <p><span class="highlight">% CV</span>: Pourcentage du cendre volante.</p>
-            <p><span class="highlight">% gypse</span>: Pourcentage de gypse ajouté, utilisé pour réguler le temps de prise du ciment.</p>
-            <p><span class="highlight">Refus 40 μm</span>: Proportion des particules supérieures à 40 microns après broyage, affectant la finesse du ciment et sa réactivité.</p>
+            <p><span class="highlight">PAF CV</span> : Perte au feu du cendre volante, mesurant la réduction du poids due à la décomposition thermique.</p>
+            <p><span class="highlight">SiO2</span> : Dioxyde de silicium, un composant clé dans la production de ciment, essentiel pour la résistance mécanique du produit fini.</p>
+            <p><span class="highlight">Al2O3</span> : Oxyde d'aluminium, utilisé pour réguler le temps de prise du ciment et améliorer ses propriétés mécaniques.</p>
+            <p><span class="highlight">Fe2O3</span> : Oxyde de fer, qui influence la couleur et certaines caractéristiques chimiques du clinker.</p>
+            <p><span class="highlight">CaO</span> : Oxyde de calcium, un composant majeur dérivé du calcaire, responsable de la formation de silicates de calcium, principaux contributeurs à la résistance du ciment.</p>
+            <p><span class="highlight">MgO</span> : Oxyde de magnésium, un composé secondaire dont une concentration élevée peut affecter les propriétés du ciment.</p>
+            <p><span class="highlight">SO3 cl</span> : Oxyde de soufre dans le clinker, reflétant la quantité de soufre issue du combustible utilisé.</p>
+            <p><span class="highlight">K2O</span> : Oxyde de potassium, un alkali qui affecte la formation des phases dans le clinker et la réactivité du ciment.</p>
+            <p><span class="highlight">PAF cl</span> :La perte au feu du clinker est un paramètre qui mesure la quantité de matière volatile qui est libérée lorsque le clinker est chauffé à une température élevée, généralement autour de 1000-1100 °C .</p>
+            <p><span class="highlight">CaOl</span> : Oxyde de calcium libre, représentant la quantité de chaux non réagit, signe d'une cuisson incomplète.</p>
+            <p><span class="highlight">C3A</span> : Tricalcium aluminate, responsable de la prise rapide du ciment et de sa résistance initiale.</p>
+            <p><span class="highlight">C3S</span> : Tricalcium silicate, principal facteur de la résistance mécanique à court terme (2 à 7 jours) du ciment.</p>
+            <p><span class="highlight">SO3 g</span> : Oxyde de soufre dans le gypse, régulateur du temps de prise du ciment.</p>
+            <p><span class="highlight">%clinker</span> : Pourcentage de clinker dans le mélange cimentaire, principal constituant réactif du ciment.</p>
+            <p><span class="highlight">% CV</span> : Pourcentage du cendre volante.</p>
+            <p><span class="highlight">% gypse</span> : Pourcentage de gypse ajouté, utilisé pour réguler le temps de prise du ciment.</p>
+            <p><span class="highlight">Refus 40 μm</span> : Proportion des particules supérieures à 40 microns après broyage, affectant la finesse du ciment et sa réactivité.</p>
         </div>
     """, unsafe_allow_html=True)
 
@@ -332,7 +382,7 @@ def info_tech_page():
                 <td>0.8214</td>
             </tr>
             <tr>
-                <td><strong>Rappel</strong></td>
+                <td><strong>Précision</strong></td>
                 <td>0.8424</td>
             </tr>
             <tr>
@@ -367,7 +417,7 @@ def info_tech_page():
                 <td>0.9464</td>
             </tr>
             <tr>
-                <td><strong>Rappel</strong></td>
+                <td><strong>Précision</strong></td>
                 <td>0.9478</td>
             </tr>
             <tr>
@@ -382,12 +432,14 @@ def info_tech_page():
     st.image("matice_confusion_28.png", caption="Matrice de confusion pour le modèle Random Forest (RC28j)", use_column_width=True)
     st.image("roc.png", caption="La courbe de ROC pour le modèle Random Forest (RC28j)", use_column_width=True)
 
-# Afficher la page sélectionnée
+
+
+# Affichage du contenu en fonction du choix de l'utilisateur
 if page == '🏠 Accueil':
     home()
-elif page == '⚙️ Classification et optimisation en utilisant RC2j':
+elif page == '⚙️ Classification avec RC2j':
     rc2_page()
-elif page == '⚙️ Classification et optimisation en utilisant RC28j':
+elif page == '⚙️ Classification avec RC28j':
     rc28_page()
 elif page == '📋 Informations Techniques':
     info_tech_page()
