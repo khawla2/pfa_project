@@ -1,0 +1,87 @@
+/* style.css */
+
+/* Cadre vert autour de la barre latérale */
+[data-testid="stSidebar"] {
+    background-color: #FFFFFF; /* Fond blanc pour la barre latérale */
+    color: #004d00; /* Texte en vert foncé */
+    border: 2px solid #004d00; /* Cadre vert */
+    border-radius: 10px; /* Coins arrondis */
+}
+
+h1, .sidebar-text {
+    color: #004d00; /* Texte vert foncé */
+}
+
+.stSelectbox label {
+    color: #004d00; /* Couleur du texte dans les labels */
+}
+
+h2 {
+    color: #004d00; /* Titre vert foncé */
+    font-family: 'Arial', sans-serif; /* Police simple */
+    font-weight: bold;
+    text-align: center;
+}
+
+/* Image de fond */
+.app-background {
+    background-image: url('https://www.cimentsdumaroc.com/sites/default/files/styles/header_image_large_xl/public/2023-11/Montage%20Sacs%20CDM%20V19_1.jpg.webp?itok=gH68eg6F');
+    background-size: cover;
+    background-position: center;
+    height: 100vh;
+    opacity: 0.8; /* Transparence légère */
+}
+
+/* Rectangle autour du texte */
+.rectangle {
+    border: 3px solid #004d00; /* Cadre vert foncé */
+    border-radius: 15px; /* Coins arrondis */
+    padding: 10px;
+    background-color: rgba(255, 255, 255, 0.8); /* Fond blanc semi-transparent */
+    display: inline-block;
+    text-align: center;
+    margin: 20px auto; /* Centrage horizontal */
+}
+
+/* Alignement du bouton de soumission */
+button[kind="formSubmit"] {
+    display: block;
+    margin: 20px auto; /* Centrage et marge */
+    background-color: #FFD700; /* Couleur du bouton en jaune */
+    color: #000000; /* Texte noir */
+    border-radius: 10px; /* Coins arrondis */
+    font-size: 16px; /* Taille du texte */
+    padding: 10px 20px; /* Espacement interne */
+    border: none; /* Pas de bordure */
+    cursor: pointer; /* Curseur en forme de main */
+}
+
+/* Style du formulaire */
+form {
+    background-color: #f9f9f9; /* Fond gris clair */
+    padding: 20px;
+    border-radius: 15px;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+}
+
+/* Espacement des colonnes dans le formulaire */
+.stForm .stColumns > div {
+    padding: 0 10px;
+}
+
+/* Icônes et messages de succès/erreur */
+.stSuccess, .stError {
+    font-size: 18px;
+    padding: 15px;
+    border-radius: 10px;
+}
+
+.stSuccess {
+    background-color: #d4edda;
+    color: #155724;
+}
+
+.stError {
+    background-color: #f8d7da;
+    color: #721c24;
+}
